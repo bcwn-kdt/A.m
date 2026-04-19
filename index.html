@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.M — Khi Đêm Thở</title>
+<meta name="description" content="Khi Đêm Thở — thơ của A.M. Có những lời chỉ đêm mới hiểu được.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0c0b;
+    --ink-muted: #4a4540;
+    --ink-faint: #8a8580;
+    --paper: #f5f2ed;
+    --paper-warm: #ede8e0;
+    --gold: #b8996e;
+    --gold-light: #d4b98a;
+    --cream: #faf8f4;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Lora', Georgia, serif;
+    font-weight: 400;
+    line-height: 1.8;
+    cursor: default;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mix-blend-mode: normal;
+  }
+
+  nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 3rem; right: 3rem;
+    height: 0.5px;
+    background: rgba(245,242,237,0.1);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+  }
+
+  .nav-links a:hover { opacity: 1; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18vw;
+    font-weight: 300;
+    color: rgba(184,153,110,0.05);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .hero-tagline {
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-faint);
+    color: rgba(245,242,237,0.45);
+    max-width: 32ch;
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--paper);
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.8s forwards;
+    transition: gap 0.3s;
+  }
+
+  .hero-cta:hover { gap: 1.5rem; }
+
+  .hero-cta::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 0.5px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+
+  .hero-cta:hover::after { width: 60px; }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.5s forwards;
+  }
+
+  .scroll-line {
+    width: 0.5px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  .scroll-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.6;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    margin-top: 0.5rem;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 3rem;
+    margin: 0.5rem 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 0.5px;
+    background: rgba(184,153,110,0.2);
+  }
+
+  .divider-glyph {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--gold);
+    opacity: 0.4;
+    font-size: 1rem;
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    padding: 7rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 0.5px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .about-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+  }
+
+  .about-heading em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .about-body p {
+    font-size: 0.95rem;
+    color: rgba(245,242,237,0.7);
+    margin-bottom: 1.2rem;
+    line-height: 1.9;
+  }
+
+  .about-quote {
+    border-left: 1px solid var(--gold);
+    padding-left: 1.5rem;
+    margin-top: 2.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: rgba(245,242,237,0.5);
+    line-height: 1.7;
+  }
+
+  /* ── POEMS ── */
+  #tho { max-width: 1100px; }
+
+  .poems-intro {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 4rem;
+    max-width: 22ch;
+  }
+
+  .poem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+  }
+
+  .poem-card {
+    background: rgba(245,242,237,0.03);
+    padding: 2.5rem 2rem;
+    border: 0.5px solid rgba(184,153,110,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+    cursor: pointer;
+  }
+
+  .poem-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(184,153,110,0.07) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .poem-card:hover { background: rgba(245,242,237,0.05); }
+  .poem-card:hover::before { opacity: 1; }
+
+  .poem-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    opacity: 0.5;
+    margin-bottom: 1.2rem;
+  }
+
+  .poem-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .poem-excerpt {
+    font-size: 0.85rem;
+    color: rgba(245,242,237,0.5);
+    line-height: 1.9;
+    font-style: italic;
+  }
+
+  .poem-excerpt em { color: rgba(245,242,237,0.3); }
+
+  /* ── FEATURED POEM ── */
+  .poem-feature {
+    grid-column: 1 / -1;
+    background: rgba(184,153,110,0.06);
+    border: 0.5px solid rgba(184,153,110,0.2);
+    padding: 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .poem-feature-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .poem-feature-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .poem-feature-sub {
+    font-size: 0.8rem;
+    color: rgba(245,242,237,0.4);
+    margin-bottom: 2rem;
+  }
+
+  .poem-lines {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: 2;
+    color: rgba(245,242,237,0.75);
+  }
+
+  .poem-lines p { margin-bottom: 0.2rem; }
+
+  /* ── BRAND / IDENTITY ── */
+  .identity-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  .identity-item {
+    padding: 2rem 0;
+    border-top: 0.5px solid rgba(184,153,110,0.2);
+  }
+
+  .identity-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: rgba(184,153,110,0.15);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .identity-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.7rem;
+    color: var(--paper);
+  }
+
+  .identity-desc {
+    font-size: 0.875rem;
+    color: rgba(245,242,237,0.5);
+    line-height: 1.8;
+  }
+
+  /* ── CONTACT ── */
+  .contact-wrap {
+    text-align: center;
+    padding: 8rem 3rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .contact-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-sub {
+    font-size: 0.9rem;
+    color: rgba(245,242,237,0.45);
+    margin-bottom: 3rem;
+    font-style: italic;
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .contact-link {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--paper);
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.3s, color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .contact-link::before {
+    content: '—';
+    color: var(--gold);
+    font-size: 0.9rem;
+  }
+
+  .contact-link:hover { opacity: 1; color: var(--gold-light); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 0.5px solid rgba(245,242,237,0.08);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.6;
+  }
+
+  .footer-copy {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    color: rgba(245,242,237,0.25);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── FULL-WIDTH DARK STRIP ── */
+  .strip {
+    background: rgba(245,242,237,0.02);
+    border-top: 0.5px solid rgba(184,153,110,0.08);
+    border-bottom: 0.5px solid rgba(184,153,110,0.08);
+    padding: 2rem 3rem;
+    display: flex;
+    gap: 4rem;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .strip-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(184,153,110,0.35);
+    animation: marquee 20s linear infinite;
+    flex-shrink: 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50%       { opacity: 1;   transform: scaleY(1.15); }
+  }
+
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    nav::after { left: 1.5rem; right: 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.5rem 4rem; }
+    .hero-bg-text { font-size: 32vw; }
+    section { padding: 5rem 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .poem-grid { grid-template-columns: 1fr; }
+    .poem-feature { grid-template-columns: 1fr; gap: 2rem; padding: 2rem; }
+    .identity-grid { grid-template-columns: 1fr; gap: 0; }
+    .contact-wrap { padding: 5rem 1.5rem; }
+    .contact-links { gap: 1.5rem; flex-direction: column; align-items: center; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+    .divider { padding: 0 1.5rem; }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">A.M</a>
+  <ul class="nav-links">
+    <li><a href="#gioi-thieu">Giới thiệu</a></li>
+    <li><a href="#tho">Thơ</a></li>
+    <li><a href="#lien-he">Liên hệ</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg-text" aria-hidden="true">ĐÊM</div>
+  <p class="hero-eyebrow">A.M — Thơ</p>
+  <h1 class="hero-title">Khi<br><em>Đêm</em><br>Thở</h1>
+  <p class="hero-tagline">Có những lời chỉ đêm mới hiểu được</p>
+  <a href="#tho" class="hero-cta">Đọc thơ</a>
+  <div class="hero-scroll" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Cuộn xuống</span>
+  </div>
+</div>
+
+<!-- DIVIDER -->
+<div class="divider" aria-hidden="true">
+  <div class="divider-line"></div>
+  <span class="divider-glyph">✦</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- MARQUEE STRIP -->
+<div class="strip" aria-hidden="true">
+  <span class="strip-text">Khi Đêm Thở &nbsp;—&nbsp; A.M &nbsp;—&nbsp; Có những lời chỉ đêm mới hiểu được &nbsp;—&nbsp; Thơ &nbsp;—&nbsp; Khi Đêm Thở &nbsp;—&nbsp; A.M &nbsp;—&nbsp; Có những lời chỉ đêm mới hiểu được &nbsp;—&nbsp; Thơ &nbsp;—&nbsp;</span>
+  <span class="strip-text" aria-hidden="true">Khi Đêm Thở &nbsp;—&nbsp; A.M &nbsp;—&nbsp; Có những lời chỉ đêm mới hiểu được &nbsp;—&nbsp; Thơ &nbsp;—&nbsp; Khi Đêm Thở &nbsp;—&nbsp; A.M &nbsp;—&nbsp; Có những lời chỉ đêm mới hiểu được &nbsp;—&nbsp; Thơ &nbsp;—&nbsp;</span>
+</div>
+
+<!-- GIỚI THIỆU -->
+<section id="gioi-thieu">
+  <div class="section-label reveal">Về tôi</div>
+  <div class="about-grid">
+    <div class="reveal">
+      <h2 class="about-heading">Mình viết để<br>xoa dịu<br><em>chính mình</em></h2>
+    </div>
+    <div class="about-body reveal" style="transition-delay: 0.15s">
+      <p>Xin chào, mình là <strong>A.M</strong> — tác giả của <em>Khi Đêm Thở</em>. Mình thường viết vào ban đêm, khi mọi thứ đủ yên tĩnh để lắng nghe chính mình.</p>
+      <p>Thơ của mình được viết ra từ những cảm xúc chân thật nhất — sau những cuộc tình, những đêm dài, những lát cắt mỏng dày của cuộc sống. Không cố làm đẹp. Không cố làm đau. Chỉ là thật.</p>
+      <p>Tập thơ đầu tiên này là lời gửi đến bạn — người cũng đã đi qua các cung bậc tình yêu, cũng từng đi qua nỗi đau. <em>Bạn không một mình.</em></p>
+      <blockquote class="about-quote">
+        "Mình ngồi bên ô cửa sổ, nhìn anh thật lâu và thật chậm. Vì ngày mới sang, hai chúng mình lại là hai."
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider" aria-hidden="true">
+  <div class="divider-line"></div>
+  <span class="divider-glyph">✦</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- THƠ -->
+<section id="tho">
+  <div class="section-label reveal">Thơ</div>
+  <p class="poems-intro reveal" style="font-family:'Cormorant Garamond',serif; font-weight:300;">Những bài thơ<br>từ <em>bóng tối</em><br>và ánh sáng</p>
+
+  <div class="poem-grid">
+
+    <!-- Featured -->
+    <div class="poem-feature reveal">
+      <div>
+        <p class="poem-feature-label">Bài thơ nổi bật</p>
+        <h3 class="poem-feature-title">Vết Đêm</h3>
+        <p class="poem-feature-sub">từ tập thơ Khi Đêm Thở</p>
+        <a href="#lien-he" style="font-family:'Cormorant Garamond',serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;display:inline-flex;align-items:center;gap:0.8rem;">Đọc thêm <span style="display:block;width:30px;height:0.5px;background:var(--gold);"></span></a>
+      </div>
+      <div class="poem-lines">
+        <p>Dưới ánh trăng, hơi thở ta tìm nhau,</p>
+        <p>Da kề da, nhịp tim run rất khẽ.</p>
+        <p>Tiếng thì thầm hoà trong niềm lặng lẽ,</p>
+        <p>Môi tìm môi, quyện chặt từng nhịp đếm.</p>
+        <br>
+        <p style="color:rgba(245,242,237,0.4);">Cả vũ trụ chỉ còn đây hai kẻ.</p>
+      </div>
+    </div>
+
+    <!-- Card 1 -->
+    <div class="poem-card reveal" style="transition-delay:0.1s">
+      <p class="poem-number">I</p>
+      <h3 class="poem-title">Trái Tim Không Tuổi</h3>
+      <p class="poem-excerpt">Em từng nghĩ, trái tim mình không tuổi<br>Rong ruổi, cuộc yêu nào cũng tàn<br><em>Dẫu hoang tàn, vẫn yêu như lần cuối</em></p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="poem-card reveal" style="transition-delay:0.2s">
+      <p class="poem-number">II</p>
+      <h3 class="poem-title">Ngày Lại Ngày</h3>
+      <p class="poem-excerpt">Một ngày, ta đặt xuống tổn thương trong lòng,<br>Rồi một ngày, ta nói với người về nỗi niềm bên trong.<br><em>Nuốt chửng đời ta vào khoảng trống.</em></p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="poem-card reveal" style="transition-delay:0.3s">
+      <p class="poem-number">III</p>
+      <h3 class="poem-title">Bình Thường</h3>
+      <p class="poem-excerpt">Rồi em sẽ lại yêu<br>Hơn thảy một chữ "nhiều"<br><em>Một cách rất "bình thường"</em></p>
+    </div>
+
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider" aria-hidden="true">
+  <div class="divider-line"></div>
+  <span class="divider-glyph">✦</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- BRAND IDENTITY -->
+<section>
+  <div class="section-label reveal">Thương hiệu</div>
+  <h2 class="about-heading reveal" style="max-width:18ch;">Xây dựng từ <em>bóng đêm</em> và sự thành thật</h2>
+  <div class="identity-grid">
+    <div class="identity-item reveal">
+      <div class="identity-num">01</div>
+      <h3 class="identity-title">Bút danh A.M</h3>
+      <p class="identity-desc">Viết tắt gợi lên khoảnh khắc sáng sớm — ranh giới giữa đêm và ngày — nơi cảm xúc chân thật nhất.</p>
+    </div>
+    <div class="identity-item reveal" style="transition-delay:0.1s">
+      <div class="identity-num">02</div>
+      <h3 class="identity-title">Khi Đêm Thở</h3>
+      <p class="identity-desc">Thương hiệu thơ cá nhân. Đêm là không gian để mình viết, để bạn đọc — yên tĩnh và không phán xét.</p>
+    </div>
+    <div class="identity-item reveal" style="transition-delay:0.2s">
+      <div class="identity-num">03</div>
+      <h3 class="identity-title">Xưng hô mình — bạn</h3>
+      <p class="identity-desc">Gần gũi, không khoảng cách. Thơ không phải để chiêm ngưỡng từ xa — mà để chạm vào.</p>
+    </div>
+    <div class="identity-item reveal" style="transition-delay:0.3s">
+      <div class="identity-num">04</div>
+      <h3 class="identity-title">Cộng đồng</h3>
+      <p class="identity-desc">Hướng đến những người khó nói ra điều trong lòng — và cộng đồng LGBTQ+ tìm thấy tiếng nói trong thơ.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div id="lien-he" class="contact-wrap">
+  <div class="section-label reveal" style="justify-content:center;">Liên hệ</div>
+  <h2 class="contact-heading reveal">Hãy để<br>đêm kể</h2>
+  <p class="contact-sub reveal">Mình luôn ở đây, trong bóng đêm và ánh sáng.</p>
+  <div class="contact-links reveal">
+    <a href="https://facebook.com/" target="_blank" rel="noopener" class="contact-link">Facebook</a>
+    <a href="https://instagram.com/" target="_blank" rel="noopener" class="contact-link">Instagram</a>
+    <a href="mailto:hello@khidemtho.com" class="contact-link">Email</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-name">A.M — Khi Đêm Thở</span>
+  <span class="footer-copy">© 2026 · Có những lời chỉ đêm mới hiểu được</span>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
